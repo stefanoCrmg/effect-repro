@@ -1,7 +1,7 @@
 import * as Context from '@effect/data/Context'
 import * as Config from '@effect/io/Config'
+import * as configProvider from '@effect/io/Config/Provider'
 import * as Layer from '@effect/io/Layer'
-import * as Effect from '@effect/io/Effect'
 import { flow } from '@fp-ts/core/function'
 
 export const FrontendEnv = Context.Tag<FrontendEnv>()
@@ -12,11 +12,14 @@ export const ConfigUrl = flow(
   Config.mapAttempt((_) => new URL(_)),
 )
 
-export const FrontendConfig: Config.Config<FrontendEnv> = Config.struct({
+const FrontendEnvMap = new Map([["NEXT_PUBLIC_BACKEND_URL", process.env.NEXT_PUBLIC_BACKEND_URL!]])
+const MapProvider = configProvider.fromMap(FrontendEnvMap)
+
+export const FrontendEnvConfig: Config.Config<FrontendEnv> = Config.struct({
   backendURL: ConfigUrl('NEXT_PUBLIC_BACKEND_URL'),
 })
 
 export const FrontendLive = Layer.effect(
   FrontendEnv,
-  Effect.config(FrontendConfig),
+  MapProvider.load(FrontendEnvConfig)
 )
