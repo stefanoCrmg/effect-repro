@@ -10,7 +10,7 @@ import { BackendEnv } from "@/utils/backendEnv"
 
 export default function Home() {
   const [stuff, setStuff] = useState<string | null>(null)
-  
+
   useEffect(() => {
     pipe(
       Z.serviceWithEffect(FrontendEnv, ({ backendURL }) => fetchAndValidate(Pokemon, `${backendURL}/gengar`)),
